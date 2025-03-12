@@ -51,3 +51,53 @@ while x < len(values):
     print(f"{row_val[0]:^0} {row_val[1]:^25} {row_val[2]:^12} {row_val[3]:^12} {row_val[4]:^12} {row_val[5]:^12} {row_val[6]:^15}")
 
     x = x + 7
+
+from bokeh.plotting import figure, show
+
+list_x = []       #for years
+list_y1 = []      #for avg stock price
+list_y2 = []      #for annual % change
+
+y = 0
+while y < len(values):
+    list_x.append(values[y])
+    list_y1.append(values[y+1])
+    list_y2.append(values[y+6].strip("%"))
+    y = y + 7
+
+list_x.reverse()
+list_y1.reverse()
+list_y2.reverse()
+#print(list_x)
+#print(list_y1)
+#print(list_y2)
+
+#for stock price
+p = figure(title="Average Stock Price History", x_axis_label = "year", y_axis_label = "average Stock Price")
+
+p.line(list_x, list_y1, color = 'blue', line_width = 2)
+
+# Adjust x and y ranges to center the plot
+p.x_range.start = min(list(map(int, list_x))) - 1
+p.x_range.end = max(list(map(int, list_x))) + 1
+p.y_range.start = min(list(map(float, list_y1))) - 5
+p.y_range.end = max(list(map(float, list_y1))) + 5
+
+#show(p)
+
+#for % change
+b = figure(x_range=list_x, height=350, title="Annual % Change History", x_axis_label = "year", y_axis_label = "Annual % Change")
+
+b.vbar(x=list_x, top=list_y2, width=0.5)
+
+from math import pi
+
+b.xaxis.major_label_orientation = pi/2
+
+#show(b)
+
+from bokeh.layouts import row
+
+layout = row(p, b)
+
+show(layout)
