@@ -42,7 +42,7 @@ def stock_info(ticker):
 
     print("-" * 100)
 
-    # Table 2
+    # Table 2 ==>
     table_2 = all_table[1]
 
     all_headings_2 = table_2.find_all("th")
@@ -55,19 +55,23 @@ def stock_info(ticker):
     print(f"{values_2[0]:^30} {values_2[1]:^30} {values_2[2]:^15} {values_2[3]:^15}\n")
     print("-" * 100)
 
-    return values_1
+    for_plot = [main_heading_1] + values_1
 
-def plot_stock_data(values_1):
-    list_x = [values_1[i] for i in range(0, len(values_1), 7)]  #years
-    list_y1 = [values_1[i+1] for i in range(0, len(values_1), 7)]  #avg stock price
-    list_y2 = [values_1[i+6].strip('%') for i in range(0, len(values_1), 7)]  #annual % change
+    return for_plot
+
+def plot_stock_data(for_plot):
+    list_x = [for_plot[i] for i in range(1, len(for_plot), 7)]  #years
+    list_y1 = [for_plot[i+1] for i in range(1, len(for_plot), 7)]  #avg stock price
+    list_y2 = [for_plot[i+6].strip('%') for i in range(1, len(for_plot), 7)]  #annual % change
 
     list_x.reverse()
     list_y1.reverse()
     list_y2.reverse()
 
+    stock_name = for_plot[0].replace(" Historical Annual Stock Price Data", "")
+
     # For stock price
-    p = figure(title="Average Stock Price History", x_axis_label="Year", y_axis_label="Average Stock Price")
+    p = figure(title=f"{stock_name}'s Average Stock Price History", x_axis_label="Year", y_axis_label="Average Stock Price")
     p.line(list_x, list_y1, color='blue', line_width=2)
 
     p.x_range.start = min(map(int, list_x)) - 1
@@ -76,7 +80,7 @@ def plot_stock_data(values_1):
     p.y_range.end = max(map(float, list_y1)) + 5
 
     # For annual % change
-    b = figure(x_range=list_x, height=350, title="Annual % Change History", x_axis_label="Year", y_axis_label="Annual % Change")
+    b = figure(x_range=list_x, height=350, title=f"{stock_name}'s Annual % Change History", x_axis_label="Year", y_axis_label="Annual % Change")
     b.vbar(x=list_x, top=list_y2, width=0.5)
 
     b.xaxis.major_label_orientation = pi/2
